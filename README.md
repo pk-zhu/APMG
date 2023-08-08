@@ -1,6 +1,6 @@
 # GigaGR: Giga-Genome-Reduction
 
-A pipeline for optimizing large genome analysis by removing transposons or other repetitive elements.
+**A pipeline for optimizing large genome analysis by removing transposons or other repetitive elements.**
 
 大基因组在比对或建立索引时常常占用大量的计算资源，对计算机造成负担，并导致意外的分析失败。而在一些分析中并不关注基因组所有的区域，比如转录组比对（只关注转录本）或GWAS、eQTL（在大量的SNP/INDEL中，通常仅关注外显子区比较重要的位点），而关键的区域（外显子、内含子、UTR等）及其少部份基因间区的部分可能仅占基因组整体大小的50%或更低。因此基因组冗余部分的比对造成了大量不必要的占用，这里我提出了一种思路，即通过删除基因组中重复区域来减小参考基因组大小，以使分析流程轻量化，降低大基因比对的计算资源门槛。
 
