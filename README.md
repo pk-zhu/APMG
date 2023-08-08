@@ -1,5 +1,5 @@
 # ULGR: Ultra-Large-Genome-Reductions
-A pipeline for optimizing ultra-large genome analysis by removing transposons or other repetitive elements
+A pipeline for optimizing ultra-large genome analysis by removing transposons or other repetitive elements.
 
 大于10GB的基因组在比对时或建立索引时常常占用大量的计算资源，对计算机造成负担，并导致意外的分析失败。而在一些分析中，比如转录组比对（只关注转录本）或GWAS（通常仅关注外显子区比较重要的位点），而这些区域及其少部份基因间区的部分可能仅占基因组整体大小的50%或更低。因此基因组冗余部分的比对造成了大量不必要的占用，这里我提出了一种思路，即通过删除基因组中重复区域来减小基因组大小，以使分析流程轻量化，降低大基因比对的计算资源门槛。
 
