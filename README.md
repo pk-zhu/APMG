@@ -19,8 +19,10 @@
 # 首先，需要通过repeatmasker对基因组进行串联区域的注释
 
 
-# 其次，使用我们提供的perl脚本删除被注释为transponser的区间，得到轻量版的基因组文件
-
+# 其次，使用我们提供的python脚本删除被注释为transponser的区间，得到轻量版的基因组文件
+```
+nohup python -u gigagr.py -g genome.fa -f annotation.gff3 -type Transposon -o output.fa -n 40
+```
 # 接下来，我使用两种方法基于cds序列对轻量基因组进行重新注释
 
 ## 方法一：基于haisat2和stringtie
