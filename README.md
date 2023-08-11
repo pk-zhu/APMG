@@ -21,7 +21,10 @@
 
 ### 其次，使用我们提供的python脚本删除被注释为transponser的区间，得到轻量版的基因组文件
 ```
-nohup python -u gigagr.py -g genome.fa -f annotation.gff3 -type Transposon -o output.fa -n 40
+nohup python -u gigagr.py -g genome.fa -f annotation.gff3 -type Transposon -o output.fa -n 12 &
+
+#注意这里-n指的是运行脚本的核心数，一个核心处理一条scarfold，不需要太多线程，因为这不能使脚本运行速度加快。
+#因大基因组通常包括几十亿条transposons，每处理100000条序列将打印一次报告，使您确认程序在正常运行。若您需要删除的记录较少，可以在脚本中降低报告的记录数量。
 ```
 ### 接下来，我使用两种方法基于cds序列对轻量基因组进行重新注释
 
