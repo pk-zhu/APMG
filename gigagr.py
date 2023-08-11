@@ -34,7 +34,7 @@ def process_and_write_record(record, delete_regions, output_file):
         deleted_region_count = 0
         for start, end in delete_regions[seqid]:
             new_seq += seq[pointer:start - 1]
-            #print(f"Deleted region: {start} - {end} in sequence {seqid}") #如果希望报告每一条删除的记录，请取消删除此行。
+            #print(f"Deleted region: {start} - {end} in sequence {seqid}") #如果希望报告每一条删除的记录，请取消注释
             pointer = end
             deleted_region_count += 1
             if deleted_region_count % 100000 == 0:
