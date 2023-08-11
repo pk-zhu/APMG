@@ -1,8 +1,7 @@
-import sys
 import argparse
-import threading
+import multiprocessing
 from Bio import SeqIO
-from queue import Queue, Empty
+import time
 
 def get_delete_regions(gff_file, type_value):
     delete_regions = {}
@@ -20,32 +19,40 @@ def get_delete_regions(gff_file, type_value):
                 if seqid not in delete_regions:
                     delete_regions[seqid] = []
                 delete_regions[seqid].append((start, end))
-    print("Finished processing GFF file.")
+    print("Finished processing GFF file and obtained delete regions.")
     return delete_regions
 
-def process_and_write_record(record, delete_regions, output_file, write_lock):
+def process_and_write_record(record, delete_regions, output_file):
     seqid = record.id
     seq = record.seq
-    print(f"Processing and writing sequence {seqid}")
-    
+    print(f"Processing sequence {seqid}")
+
     if seqid in delete_regions:
         delete_regions[seqid].sort()
         new_seq = ""
         pointer = 0
+        deleted_region_count = 0
         for start, end in delete_regions[seqid]:
             new_seq += seq[pointer:start - 1]
             pointer = end
+            deleted_region_count += 1
+            if deleted_region_count % 100000 == 0:
+                print(f"Deleted {deleted_region_count} regions in sequence {seqid}")
+
         new_seq += seq[pointer:]
         new_record = record[:]
         new_record.seq = new_seq
-    else:
-        new_record = record
-    
-    with open(output_file, "a") as f:
-        with write_lock:
+        with open(output_file, "a") as f:
             SeqIO.write(new_record, f, "fasta")
+    else:
+        with open(output_file, "a") as f:
+            SeqIO.write(record, f, "fasta")
     
     print(f"Finished processing and writing sequence {seqid}")
+
+def process_records(records, delete_regions, output_file):
+    for record in records:
+        process_and_write_record(record, delete_regions, output_file)
 
 def main():
     parser = argparse.ArgumentParser(description="Delete sequences from a genome file based on a gff file and a type value")
@@ -62,25 +69,26 @@ def main():
     type_value = args.type
     num_threads = args.threads
 
-    print("Reading genome file...")
     delete_regions = get_delete_regions(gff_file, type_value)
-    print("Finished reading genome file and GFF file.")
-    
+    print("Finished reading GFF file.")
+
     with open(output_file, "w") as f:
         pass
 
-    write_lock = threading.Lock()
+    with open(genome_file, "r") as genome_f:
+        genome_records = list(SeqIO.parse(genome_f, "fasta"))
 
-    print(f"Processing genome using {num_threads} threads and writing output to file...")
-    for record in SeqIO.parse(genome_file, "fasta"):
-        thread = threading.Thread(target=process_and_write_record, args=(record, delete_regions, output_file, write_lock))
-        thread.start()
-    
-    print("Waiting for all threads to complete...")
-    main_thread = threading.currentThread()
-    for thread in threading.enumerate():
-        if thread is not main_thread:
-            thread.join()
+    chunk_size = len(genome_records) // num_threads
+    chunks = [genome_records[i:i+chunk_size] for i in range(0, len(genome_records), chunk_size)]
+
+    processes = []
+    for chunk in chunks:
+        process = multiprocessing.Process(target=process_records, args=(chunk, delete_regions, output_file))
+        process.start()
+        processes.append(process)
+
+    for process in processes:
+        process.join()
 
     print("Program completed.")
 
