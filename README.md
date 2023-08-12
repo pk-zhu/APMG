@@ -40,7 +40,8 @@ stringtie -p 28 -o stringtie.gtf reads.bam
 
 ##### 方法二：gmap
 ```
-gmap_build -d new_genome new_genome.fasta
+conda install gmap=2023.06.01 -y #首先安装gamp，
+
 
 ```
 
