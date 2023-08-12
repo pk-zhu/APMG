@@ -38,8 +38,11 @@ hisat2 -p 28 -x genome --dta -U reads.fq | samtools sort -@ 28 > reads.bam
 stringtie -p 28 -o stringtie.gtf reads.bam
 ```
 
-##### 方法二：基于blast（TBtools）
+##### 方法二：gmap
+```
+gmap_build -d new_genome new_genome.fasta
 
+```
 
 # 再说一句
 
