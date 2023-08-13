@@ -47,7 +47,16 @@ make install
 #建立索引
 gmap_build -d clean_genome clean_genome.fa
 #比对
-gmap -d clean_genome -f gff3_gene cds.fa -B 4 -t 28 >clean_genome.gff3 &
+gmap -d clean_genome -f gff3_gene cds.fa -B 4 -t 28 >out1.gff3 &
+#注释结果初步处理
+python tidy_gff.py -i out1.gff3 -o out2.gff3
+#质控gff3tool
+mkdir gff_qc
+gff3_QC -g out2.gff3 -f clean_genome.fa -o ./gff_qc/sample.qc -s ./gff_qc/stat.txt
+gff3_fix -qc_r ./sample.qc -g out2.gff3 -og out3.gff3
+#重命名和排序
+python rename_gff.py -g out3.gff3 -c bed.txt -p out4
+gff3_sort -g out4.gff3 -og out5.gff3
 ```
 
 # 再说一句
