@@ -26,19 +26,7 @@ nohup python -u gigagr.py -g genome.fa -f annotation.gff3 -type Transposon -o cl
 #注意这里-n指的是运行脚本的核心数，一个核心处理一条scarfold，不需要太多线程，因为这不能使脚本运行速度加快。
 #因大基因组通常包括几十亿条transposons，每处理100000条序列将打印一次报告，使您确认程序在正常运行。若您需要删除的记录较少，可以在脚本中降低报告的记录数量。
 ```
-### 接下来，我使用两种方法基于cds序列对轻量基因组进行重新注释
-
-##### 方法一：基于haisat2和stringtie
-```shell
-#建立基因组索引
-hisat2-build -p 28 genome.fa genome
-#将CDS序列比对轻量版参考基因组
-hisat2 -p 28 -x genome --dta -U reads.fq | samtools sort -@ 28 > reads.bam
-#stringtie注释
-stringtie -p 28 -o stringtie.gtf reads.bam
-```
-
-##### 方法二：gmap
+### 接下来，我基于cds序列对轻量基因组进行重新注释
 ```
 #首先安装gamp
 ./configure --prefix=/home/usr/software/gmap --with-gmapdb=/home/usr/software/gmap
@@ -58,6 +46,7 @@ gff3_fix -qc_r ./sample.qc -g out2.gff3 -og out3.gff3
 python rename_gff.py -g out3.gff3 -c bed.txt -p out3
 gff3_sort -g out3.rename.gff3 -og result.gff3
 ```
+### 最后，一般把注释后的cds序列提取出来，blast回原cds序列，99%以上的原cds序列应该都能对应新cds序列。
 
 # 再说一句
 
