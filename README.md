@@ -55,8 +55,8 @@ mkdir gff_qc
 gff3_QC -g out2.gff3 -f clean_genome.fa -o ./gff_qc/sample.qc -s ./gff_qc/stat.txt
 gff3_fix -qc_r ./sample.qc -g out2.gff3 -og out3.gff3
 #重命名和排序
-python rename_gff.py -g out3.gff3 -c bed.txt -p out4
-gff3_sort -g out4.gff3 -og out5.gff3
+python rename_gff.py -g out3.gff3 -c bed.txt -p out3
+gff3_sort -g out3.rename.gff3 -og result.gff3
 ```
 
 # 再说一句
