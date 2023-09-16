@@ -46,7 +46,11 @@ gff3_fix -qc_r ./sample.qc -g out2.gff3 -og out3.gff3
 python rename_gff.py -g out3.gff3 -c bed.txt -p out3
 gff3_sort -g out3.rename.gff3 -og result.gff3
 ```
-### 最后，一般把注释后的cds序列提取出来，blast回原cds序列，99%以上的原cds序列应该都能对应新cds序列。
+### busco质检
+```
+nohup busco -i genome.fa -c 10 -o busco -m geno -l busco_downloads/embryophyta_odb10 --offline &
+```
+### 结果还行的话，就把注释后的cds序列提取出来，blast回原cds序列，99%以上的原cds序列应该都能对应新cds序列。
 
 # 再说一句
 
