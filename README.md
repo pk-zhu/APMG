@@ -48,7 +48,9 @@ python tidy_gff.py -i out1.gff3 -o out2.gff3
 #### 质控gff3tool
 ```
 mkdir gff_qc
-gff3_QC -g out2.gff3 -f clean_genome.fa -o ./gff_qc/sample.qc -s ./gff_qc/stat.txt
+gff3_QC -g out2.gff3 -f clean_genome.fa \
+  -o ./gff_qc/sample.qc \
+  -s ./gff_qc/stat.txt
 gff3_fix -qc_r ./sample.qc -g out2.gff3 -og out3.gff3
 ```
 #### gff3重命名和排序
@@ -58,7 +60,11 @@ gff3_sort -g out3.rename.gff3 -og result.gff3
 ```
 ### 最后，使用Busco进行质量检查
 ```
-nohup busco -i genome.fa -c 10 -o busco -m geno -l busco_downloads/embryophyta_odb10 --offline &
+busco --cpu 10 \
+	-l busco_downloads/embryophyta_odb10 \
+	-m genome --force -o busco \
+	-i genome.fa \
+	--offline
 ```
 ### 结果还行的话，就把注释后的cds序列提取出来，blast回原cds序列，99%以上的原cds序列应该都能对应新cds序列。
 
