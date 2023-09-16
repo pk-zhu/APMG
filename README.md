@@ -27,26 +27,36 @@ nohup python -u gigagr.py -g genome.fa -f annotation.gff3 -type Transposon -o cl
 #因大基因组通常包括几十亿条transposons，每处理100000条序列将打印一次报告，使您确认程序在正常运行。若您需要删除的记录较少，可以在脚本中降低报告的记录数量。
 ```
 ### 接下来，我基于cds序列对轻量基因组进行重新注释
+
+## 首先安装gamp
 ```
-#首先安装gamp
 ./configure --prefix=/home/usr/software/gmap --with-gmapdb=/home/usr/software/gmap
-make
-make install
-#建立索引
+make && make install
+```
+## 建立索引
+```
 gmap_build -d clean_genome clean_genome.fa
+```
 #比对
+```
 gmap -d clean_genome -f gff3_gene cds.fa -B 4 -t 28 >out1.gff3 &
-#注释结果初步处理
+```
+## 注释结果初步处理
+```
 python tidy_gff.py -i out1.gff3 -o out2.gff3
-#质控gff3tool
+```
+## 质控gff3tool
+```
 mkdir gff_qc
 gff3_QC -g out2.gff3 -f clean_genome.fa -o ./gff_qc/sample.qc -s ./gff_qc/stat.txt
 gff3_fix -qc_r ./sample.qc -g out2.gff3 -og out3.gff3
-#重命名和排序
+```
+## gff3重命名和排序
+```
 python rename_gff.py -g out3.gff3 -c bed.txt -p out3
 gff3_sort -g out3.rename.gff3 -og result.gff3
 ```
-### busco质检
+### 最后，使用Busco进行质量检查
 ```
 nohup busco -i genome.fa -c 10 -o busco -m geno -l busco_downloads/embryophyta_odb10 --offline &
 ```
