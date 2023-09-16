@@ -28,30 +28,30 @@ nohup python -u gigagr.py -g genome.fa -f annotation.gff3 -type Transposon -o cl
 ```
 ### 接下来，我基于cds序列对轻量基因组进行重新注释
 
-## 首先安装gamp
+#### 首先安装gamp
 ```
 ./configure --prefix=/home/usr/software/gmap --with-gmapdb=/home/usr/software/gmap
 make && make install
 ```
-## 建立索引
+#### 建立索引
 ```
 gmap_build -d clean_genome clean_genome.fa
 ```
-#比对
+#### 比对
 ```
 gmap -d clean_genome -f gff3_gene cds.fa -B 4 -t 28 >out1.gff3 &
 ```
-## 注释结果初步处理
+#### 注释结果初步处理
 ```
 python tidy_gff.py -i out1.gff3 -o out2.gff3
 ```
-## 质控gff3tool
+#### 质控gff3tool
 ```
 mkdir gff_qc
 gff3_QC -g out2.gff3 -f clean_genome.fa -o ./gff_qc/sample.qc -s ./gff_qc/stat.txt
 gff3_fix -qc_r ./sample.qc -g out2.gff3 -og out3.gff3
 ```
-## gff3重命名和排序
+#### gff3重命名和排序
 ```
 python rename_gff.py -g out3.gff3 -c bed.txt -p out3
 gff3_sort -g out3.rename.gff3 -og result.gff3
