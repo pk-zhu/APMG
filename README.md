@@ -41,8 +41,6 @@ RepeatModeler -engine ncbi \
 ```
 #### RepeatMasker
 ```
-mkdir -p 2.RepeatMasker
-cd 2.RepeatMasker
 cat GDB-families.fa Viridiplantae_ad.fa > repeat_db.fa
 
 RepeatMasker -xsmall \
@@ -90,11 +88,10 @@ python tidy_gff.py -i out1.gff3 -o out2.gff3
 ```
 #### Quality Controlgff3tool
 ```
-mkdir -p gff_qc
 gff3_QC -g out2.gff3 -f lw_genome.fa \
-  -o ./gff_qc/sample.qc \
-  -s ./gff_qc/stat.txt
-gff3_fix -qc_r ./sample.qc -g out2.gff3 -og out3.gff3
+  -o sample.qc \
+  -s stat.txt
+gff3_fix -qc_r sample.qc -g out2.gff3 -og out3.gff3
 ```
 #### Renaming and Sorting
 ```
