@@ -64,7 +64,7 @@ EDTA.pl --genome female.fa \
 	--threads 30
 ```
 
-### Using the Python script we provide, remove intervals annotated as "Transposon" to obtain a lightweight version of the genome file.
+### 2.Using the Python script we provide, remove intervals annotated as "Transposon" to obtain a lightweight version of the genome file.
 ```
 nohup python -u ulggr.py -g genome.fa -f annotation.gff3 -type Transposon -o lw_genome.fa -n 12 &
 
