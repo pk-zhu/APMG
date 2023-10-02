@@ -15,7 +15,15 @@
 ------
 
 Large genomes often strain computational resources during alignment or indexing, leading to analysis issues. However, some analyses focus on specific genome regions, like exons, introns, UTRs, and key loci, which may represent only 50% or less of the total genome size. Aligning the entire genome results in unnecessary resource usage. Therefore, I propose removing repetitive regions to shrink the reference genome, making the analysis more efficient and lowering resource demands for large genome alignments.
-
+## 1.Software
+1. [BUSCO](https://busco.ezlab.org/)
+2. [RepeatMasker, RepeatModeler](http://www.repeatmasker.org/)
+3. [Gmap](http://research-pub.gene.com/gmap/src/)
+4. [gff3tool](https://github.com/NAL-i5K/GFF3toolkit)
+5. [GFFUtils](https://github.com/fls-bioinformatics-core/GFFUtils)
+6. [TransDecoder](https://github.com/TransDecoder/TransDecoder)
+7. [NCBI BLAST+](https://blast.ncbi.nlm.nih.gov/Blast.cgi)
+## 2.Workflow
 ### 1.Obtaining repetitive regions
 #### Obtaining Repetitive Sequences from an Existing Database
 ```
@@ -86,7 +94,7 @@ gmap -d clean_genome -f gff3_gene cds.fa -B 4 -t 28 >out1.gff3 &
 ```
 python tidy_gff.py -i out1.gff3 -o out2.gff3
 ```
-#### Quality Controlgff3tool
+#### Quality Control
 ```
 gff3_QC -g out2.gff3 -f lw_genome.fa \
   -o sample.qc \
