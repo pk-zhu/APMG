@@ -106,7 +106,7 @@ gff3_fix -qc_r sample.qc -g out2.gff3 -og out3.gff3
 python rename_gff.py -g out3.gff3 -c bed.txt -p out3
 gff3_sort -g out3.rename.gff3 -og result.gff3
 ```
-### 4.BUSCO
+### 4.Homology Assessment
 ```
 busco --cpu 10 \
 	-l busco_downloads/embryophyta_odb10 \
