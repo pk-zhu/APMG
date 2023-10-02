@@ -104,6 +104,8 @@ gff3_fix -qc_r sample.qc -g out2.gff3 -og out3.gff3
 #### Renaming and Sorting
 ```
 python rename_gff.py -g out3.gff3 -c bed.txt -p out3
+# The script used here is from GFFUtils. For convenience, i copy this script separately here. When using it, please cite orginal site.
+
 gff3_sort -g out3.rename.gff3 -og result.gff3
 ```
 ### 4.Homology Assessment
