@@ -31,7 +31,6 @@ util/buildRMLibFromEMBL.pl Viridiplantae_ad.embl > Viridiplantae_ad.fa
 ```
 #### Predicting Repetitive Sequences from genome.fa
 ```
-
 BuildDatabase -name GDB \
 	-engine ncbi \
 	genome.fa
@@ -39,7 +38,6 @@ RepeatModeler -engine ncbi \
 	-pa 28 \
 	-database GDB \
 	-LTRStruct
-
 ```
 #### RepeatMasker
 ```
