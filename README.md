@@ -16,49 +16,94 @@
 
 Large genomes often strain computational resources during alignment or indexing, leading to analysis issues. However, some analyses focus on specific genome regions, like exons, introns, UTRs, and key loci, which may represent only 50% or less of the total genome size. Aligning the entire genome results in unnecessary resource usage. Therefore, I propose removing repetitive regions to shrink the reference genome, making the analysis more efficient and lowering resource demands for large genome alignments.
 
-### 首先，需要通过repeatmasker对基因组进行串联区域的注释
-
-
-### 其次，使用我们提供的python脚本删除被注释为transponser的区间，得到轻量版的基因组文件
+### 1.Obtaining repetitive regions
+#### Obtaining Repetitive Sequences from an Existing Database
 ```
-nohup python -u gigagr.py -g genome.fa -f annotation.gff3 -type Transposon -o clean_genome.fa -n 12 &
+famdb.py -i RepeatMaskerLib.h5 families \
+	-f embl \
+	-a \
+	-d Viridiplantae \
+	> Viridiplantae_ad.embl
+util/buildRMLibFromEMBL.pl Viridiplantae_ad.embl > Viridiplantae_ad.fa
 
-#注意这里-n指的是运行脚本的核心数，一个核心处理一条scarfold，不需要太多线程，因为这不能使脚本运行速度加快。
-#因大基因组通常包括几十亿条transposons，每处理100000条序列将打印一次报告，使您确认程序在正常运行。若您需要删除的记录较少，可以在脚本中降低报告的记录数量。
+# Obtaining Viridiplantae Repetitive Sequences, using the RepBase database
+# Alternatively, you can use https://www.dfam.org/releases/Dfam_3.7/families/Dfam.hmm.gz
 ```
-### 接下来，我基于cds序列对轻量基因组进行重新注释
+#### Predicting Repetitive Sequences from genome.fa
+```
 
-#### 首先安装gamp
+BuildDatabase -name GDB \
+	-engine ncbi \
+	genome.fa
+RepeatModeler -engine ncbi \
+	-pa 28 \
+	-database GDB \
+	-LTRStruct
+
 ```
+#### RepeatMasker
+```
+mkdir -p 2.RepeatMasker
+cd 2.RepeatMasker
+cat GDB-families.fa Viridiplantae_ad.fa > repeat_db.fa
+
+RepeatMasker -xsmall \
+	-gff \
+	-html \
+	-lib repeat_db.fa \
+	-pa 28 \
+	genome.fa
+
+EDTA.pl --genome female.fa \
+	--species others \
+	--sensitive 1 --anno 1 --evaluate 1 \
+	--threads 30
+```
+
+### Using the Python script we provide, remove intervals annotated as "Transposon" to obtain a lightweight version of the genome file.
+```
+nohup python -u ulggr.py -g genome.fa -f annotation.gff3 -type Transposon -o lw_genome.fa -n 12 &
+
+# -n refers to the number of threads to run the script. One core per scaffold is sufficient. you don't need many threads as it won't significantly speed up the script.
+# Since large genomes typically contain billions of transposons, a report will be printed every 100,000 sequences processed to confirm that the program is running smoothly. If you need to remove fewer records, you can increase the number of records reported in the ulggr.py.
+```
+### 3.Re-annotate the Lightweight Genome Based on CDS Sequences
+
+#### install gamp (If already installed, please skip)
+```
+cd /home/usr/software/
+wget -c http://research-pub.gene.com/gmap/src/gmap-gsnap-2023-07-20.tar.gz
+tar -zxvfp gmap-gsnap-2023-07-20.tar.gz
 ./configure --prefix=/home/usr/software/gmap --with-gmapdb=/home/usr/software/gmap
 make && make install
 ```
-#### 建立索引
+#### build index
 ```
-gmap_build -d clean_genome clean_genome.fa
+gmap_build -d clean_genome lw_genome.fa
 ```
-#### 比对
+#### mapping
 ```
 gmap -d clean_genome -f gff3_gene cds.fa -B 4 -t 28 >out1.gff3 &
 ```
-#### 注释结果初步处理
+### 3.Processing the Annotation Results
+#### Initial Processing
 ```
 python tidy_gff.py -i out1.gff3 -o out2.gff3
 ```
-#### 质控gff3tool
+#### Quality Controlgff3tool
 ```
-mkdir gff_qc
-gff3_QC -g out2.gff3 -f clean_genome.fa \
+mkdir -p gff_qc
+gff3_QC -g out2.gff3 -f lw_genome.fa \
   -o ./gff_qc/sample.qc \
   -s ./gff_qc/stat.txt
 gff3_fix -qc_r ./sample.qc -g out2.gff3 -og out3.gff3
 ```
-#### gff3重命名和排序
+#### Renaming and Sorting
 ```
 python rename_gff.py -g out3.gff3 -c bed.txt -p out3
 gff3_sort -g out3.rename.gff3 -og result.gff3
 ```
-### 最后，使用Busco进行质量检查
+### 4.BUSCO
 ```
 busco --cpu 10 \
 	-l busco_downloads/embryophyta_odb10 \
@@ -66,8 +111,5 @@ busco --cpu 10 \
 	-i genome.fa \
 	--offline
 ```
-### 结果还行的话，就把注释后的cds序列提取出来，blast回原cds序列，99%以上的原cds序列应该都能对应新cds序列。
-
-# 再说一句
-
-有时间的话，接下来我会推出完整的snakemake工作流，并使用两三个物种的转录组数据，分别比对轻量基因组和原始基因组，观察**基因组轻量化对比对结果的影响**及**这种影响是否受物种间转座子长度差异作用**，以判断这种方法能否在转录组中应用。
+### If the results are satisfactory, extract the annotated CDS sequences, and then perform a BLAST search against the original CDS sequences (Undemonstrated).
+### More than 99% of the original CDS sequences should correspond to the new CDS sequences.
