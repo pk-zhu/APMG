@@ -1,4 +1,4 @@
-# GigaGR (GigaGenomeReduction)
+# ULGGR (Ultra-Large Gymnosperm Genomes Reduction)
 ## A pipeline for optimizing large genome analysis by removing transposons or other repetitive elements.
 
 > ***By Pengkai Zhu***
