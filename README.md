@@ -50,18 +50,17 @@ RepeatModeler -engine ncbi \
 #### RepeatMasker
 ```
 cat GDB-families.fa Viridiplantae_ad.fa > repeat_db.fa
-
 RepeatMasker -xsmall \
 	-gff \
 	-html \
 	-lib repeat_db.fa \
 	-pa 28 \
 	genome.fa
-
 EDTA.pl --genome female.fa \
 	--species others \
 	--sensitive 1 --anno 1 --evaluate 1 \
 	--threads 30
+# The output file contains duplicate region annotations, and it is referred to as 'anntation.gff3' below.
 ```
 
 ### 2.Using the Python script we provide, remove intervals annotated as "Transposon" to obtain a lightweight version of the genome file.
@@ -90,10 +89,7 @@ gmap_build -d clean_genome lw_genome.fa
 gmap -d clean_genome -f gff3_gene cds.fa -B 4 -t 28 >out1.gff3 &
 ```
 ### 3.Processing the Annotation Results
-#### Initial Processing
-```
-python tidy_gff.py -i out1.gff3 -o out2.gff3
-```
+
 #### Quality Control
 ```
 gff3_QC -g out2.gff3 -f lw_genome.fa \
@@ -107,6 +103,10 @@ python rename_gff.py -g out3.gff3 -c bed.txt -p out3
 # The script used here is from GFFUtils. For convenience, i copy this script separately here. When using it, please cite orginal site.
 
 gff3_sort -g out3.rename.gff3 -og result.gff3
+```
+#### Refine the annotation
+```
+python tidy_gff.py -i out1.gff3 -o out2.gff3
 ```
 ### 4.Homology Assessment
 ```
