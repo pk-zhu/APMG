@@ -115,6 +115,8 @@ busco --cpu 10 \
 	-m genome --force -o busco \
 	-i lw_genome.fa \
 	--offline
+
+# lw_genome.fa should have a higher BUSCO value.
 ```
 ### If the results are satisfactory, extract the annotated CDS sequences, and then perform a BLAST search against the original CDS sequences (Undemonstrated).
 ### More than 99% of the original CDS sequences should correspond to the new CDS sequences.
