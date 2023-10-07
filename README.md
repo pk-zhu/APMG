@@ -113,7 +113,7 @@ python tidy_gff.py -i out1.gff3 -o out2.gff3
 busco --cpu 10 \
 	-l busco_downloads/embryophyta_odb10 \
 	-m genome --force -o busco \
-	-i genome.fa \
+	-i lw_genome.fa \
 	--offline
 ```
 ### If the results are satisfactory, extract the annotated CDS sequences, and then perform a BLAST search against the original CDS sequences (Undemonstrated).
