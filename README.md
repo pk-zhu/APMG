@@ -14,17 +14,15 @@
 
 ------
 
-Large genomes often strain computational resources during alignment or indexing, leading to analysis issues. However, some analyses focus on specific genome regions, like exons, introns, UTRs, and key loci, which may represent only 50% or less of the total genome size. Aligning the entire genome results in unnecessary resource usage. Therefore, I propose removing repetitive regions to shrink the reference genome, making the analysis more efficient and lowering resource demands for large genome alignments.
+Large genomes often strain computational resources during alignment or indexing, leading to analysis issues. However, some analyses focus on specific genome regions, like exons, introns, UTRs, and key loci, which may represent only 50% or less of the total genome size. Aligning the entire genome results in unnecessary resource usage. Therefore, I propose masking repetitive regions to shrink the reference genome, making the analysis more efficient and lowering resource demands for large genome alignments.
 ## 1.Software
-1. [BUSCO](https://busco.ezlab.org/)
+1. [Tandem Repeats Finder](https://github.com/Benson-Genomics-Lab/TRF)
 2. [RepeatMasker, RepeatModeler](http://www.repeatmasker.org/)
-3. [Gmap](http://research-pub.gene.com/gmap/src/)
-4. [gff3tool](https://github.com/NAL-i5K/GFF3toolkit)
-5. [GFFUtils](https://github.com/fls-bioinformatics-core/GFFUtils)
-6. [TransDecoder](https://github.com/TransDecoder/TransDecoder)
-7. [NCBI BLAST+](https://blast.ncbi.nlm.nih.gov/Blast.cgi)
-## 2.Workflow
-### 1.Obtaining repetitive regions
+3. [BEDOPS](https://bedops.readthedocs.io/en/latest/index.html)
+4. [bedtools2](https://github.com/arq5x/bedtools2)
+
+## 2.Workflow (begin with genome fasta)
+### 1.Obtaining repetitive regions from RepeatMasker
 #### Obtaining Repetitive Sequences from an Existing Database
 ```
 famdb.py -i RepeatMaskerLib.h5 families \
@@ -60,63 +58,37 @@ EDTA.pl --genome female.fa \
 	--species others \
 	--sensitive 1 --anno 1 --evaluate 1 \
 	--threads 30
-# The output file contains duplicate region annotations, and it is referred to as 'anntation.gff3' below.
+# The result contains maskedgenome file "masked1.fa"
 ```
 
-### 2.Using the Python script we provide, remove intervals annotated as "Transposon" to obtain a lightweight version of the genome file.
+### 2.Obtaining repetitive regions from Tandem Repeats Finder
 ```
-nohup python -u ulggr.py -g genome.fa -f annotation.gff3 -type Transposon -o lw_genome.fa -n 12 &
+ trf yoursequence.txt 2 7 7 80 10 50 500 -f -d -m
+ # The result contains maskedgenome file "masked2.fa"
 
-# -n refers to the number of threads to run the script. One core per scaffold is sufficient. you don't need many threads as it won't significantly speed up the script.
-# Since large genomes typically contain billions of transposons, a report will be printed every 100,000 sequences processed to confirm that the program is running smoothly. If you need to remove fewer records, you can increase the number of records reported in the ulggr.py.
 ```
-### 3.Re-annotate the Lightweight Genome Based on CDS Sequences
+### 3.Generate bedfiles of masked ranges from fasta
+```
+python fastaN2bed.py masked1.fa > masked1.bed
+python fastaN2bed.py masked1.fa > masked2.bed
+# The script is in the current repository
+```
+### 4.merge bedfiles
+```
+cat masked1.bed masked2.bed > masked.bed
+bedtools merge -i masked.bed > mask.bed
+```
+### 5.Remasked genome.fa
+```
+bedtools maskfasta -fi genome.fa -bed mask.bed -fo genome.hardmasked.fasta
+```
 
-#### install gamp (If already installed, please skip)
+## 3.Workflow (begin with genome fasta and LTR anotation file)
+### 1.convert gfffile to bedfile
 ```
-cd /home/usr/software/
-wget -c http://research-pub.gene.com/gmap/src/gmap-gsnap-2023-07-20.tar.gz
-tar -zxvfp gmap-gsnap-2023-07-20.tar.gz
-./configure --prefix=/home/usr/software/gmap --with-gmapdb=/home/usr/software/gmap
-make && make install
+gff2bed < LTR.gff3 > LTR.bed
 ```
-#### build index
+### 2.Masked genome.fa
 ```
-gmap_build -d clean_genome lw_genome.fa
+bedtools maskfasta -fi genome.fa -bed mask.bed -fo genome.hardmasked.fasta
 ```
-#### mapping
-```
-gmap -d clean_genome -f gff3_gene cds.fa -B 4 -t 28 >out1.gff3 &
-```
-### 3.Processing the Annotation Results
-
-#### Quality Control
-```
-gff3_QC -g out2.gff3 -f lw_genome.fa \
-  -o sample.qc \
-  -s stat.txt
-gff3_fix -qc_r sample.qc -g out2.gff3 -og out3.gff3
-```
-#### Renaming and Sorting
-```
-python rename_gff.py -g out3.gff3 -c bed.txt -p out3
-# The script used here is from GFFUtils. For convenience, i copy this script separately here. When using it, please cite orginal site.
-
-gff3_sort -g out3.rename.gff3 -og result.gff3
-```
-#### Refine the annotation
-```
-python tidy_gff.py -i out1.gff3 -o out2.gff3
-```
-### 4.Homology Assessment
-```
-busco --cpu 10 \
-	-l busco_downloads/embryophyta_odb10 \
-	-m genome --force -o busco \
-	-i lw_genome.fa \
-	--offline
-
-# lw_genome.fa should have a higher BUSCO value.
-```
-### If the results are satisfactory, extract the annotated CDS sequences, and then perform a BLAST search against the original CDS sequences (Undemonstrated).
-### More than 99% of the original CDS sequences should correspond to the new CDS sequences.
