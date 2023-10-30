@@ -1,5 +1,5 @@
 # ULGGR (Ultra-Large Gymnosperm Genomes Reduction)
-## A pipeline for masking the genome, starting from a fasta file or a GFF file.
+## A pipeline for masking the genome, starting from a fasta file or a gff file.
 
 > ***By Pengkai Zhu***
 > 
@@ -21,7 +21,7 @@ Ultra-Large genomes often strain computational resources during alignment or ind
 3. [BEDOPS](https://bedops.readthedocs.io/en/latest/index.html)
 4. [bedtools2](https://github.com/arq5x/bedtools2)
 
-## 2.Workflow (begin with genome fasta)
+## 2.Workflow (begin with a fasta file)
 ### 1.Obtaining repetitive regions from RepeatMasker
 #### Obtaining Repetitive Sequences from an Existing Database
 ```
@@ -81,8 +81,8 @@ bedtools merge -i masked.bed > mask.bed
 bedtools maskfasta -fi genome.fa -bed mask.bed -fo genome.hardmasked.fasta
 ```
 
-## 3.Workflow (begin with genome fasta and LTR anotation file)
-### 1.convert gfffile to bedfile
+## 3.Workflow (begin with a fasta file and a LTR anotation file)
+### 1.Convert gfffile to bedfile
 ```
 gff2bed < LTR.gff3 > LTR.bed
 ```
