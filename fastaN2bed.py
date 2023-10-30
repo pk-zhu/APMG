@@ -1,4 +1,5 @@
 #!bin/python
+#https://www.danielecook.com/generate-a-bedfile-of-masked-ranges-a-fasta-file/
 
 import gzip
 import io
