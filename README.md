@@ -1,5 +1,5 @@
 # ULGGR (Ultra-Large Gymnosperm Genomes Reduction)
-## A pipeline for optimizing large genome analysis by removing transposons or other repetitive elements.
+## A pipeline for masking the genome, starting from a fasta file or a GFF file.
 
 > ***By Pengkai Zhu***
 > 
@@ -14,7 +14,7 @@
 
 ------
 
-Large genomes often strain computational resources during alignment or indexing, leading to analysis issues. However, some analyses focus on specific genome regions, like exons, introns, UTRs, and key loci, which may represent only 50% or less of the total genome size. Aligning the entire genome results in unnecessary resource usage. Therefore, I propose masking repetitive regions to shrink the reference genome, making the analysis more efficient and lowering resource demands for large genome alignments.
+Ultra-Large genomes often strain computational resources during alignment or indexing, leading to analysis issues. However, some analyses focus on specific genome regions, like exons, introns, UTRs, and key loci, which may represent only 50% or less of the total genome size. Aligning the entire genome results in unnecessary resource usage. Therefore, I propose masking repetitive regions to shrink the reference genome, making the analysis more efficient and lowering resource demands for large genome alignments.
 ## 1.Software
 1. [Tandem Repeats Finder](https://github.com/Benson-Genomics-Lab/TRF)
 2. [RepeatMasker, RepeatModeler](http://www.repeatmasker.org/)
@@ -60,7 +60,6 @@ EDTA.pl --genome female.fa \
 	--threads 30
 # The result contains maskedgenome file "masked1.fa"
 ```
-
 ### 2.Obtaining repetitive regions from Tandem Repeats Finder
 ```
  trf yoursequence.txt 2 7 7 80 10 50 500 -f -d -m
