@@ -61,7 +61,7 @@ EDTA.pl --genome female.fa \
 ```
 ### 2.Obtaining repetitive regions from Tandem Repeats Finder
 ```
- trf yoursequence.txt 2 7 7 80 10 50 500 -f -d -m
+ trf genome.fa 2 7 7 80 10 50 500 -f -d -m
  # The result contains maskedgenome file "masked2.fa"
 ```
 ### 3.Generate bedfiles of masked ranges from fasta
