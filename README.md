@@ -65,7 +65,6 @@ EDTA.pl --genome female.fa \
 ```
  trf yoursequence.txt 2 7 7 80 10 50 500 -f -d -m
  # The result contains maskedgenome file "masked2.fa"
-
 ```
 ### 3.Generate bedfiles of masked ranges from fasta
 ```
