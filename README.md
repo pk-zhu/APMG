@@ -1,5 +1,4 @@
-# ULGGR (Ultra-Large Gymnosperm Genomes Reduction)
-## A pipeline for masking the genome, starting from a fasta file or a gff file.
+## A pipeline for masking a genome, starting from a fasta file or a gff file.
 
 > ***By Pengkai Zhu***
 > 
