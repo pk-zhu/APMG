@@ -34,7 +34,7 @@ Red -gnm /path/to/genome/dir/ -msk ./OUTPUT -rpt ./OUTPUT
 awk '!/>/ {gsub(/[atcg]/,"N")} 1' ./OUTPUT/genome.msk > ./OUTPUT/genome.hardmasked.fa
 ```
 
-## 3. Workflow (begin with a fasta file and a LTR anotation file)
+## 3. Workflow (begin with a fasta file and a repeats anotation file)
 ### 1. Convert gfffile to bedfile
 ```
 gff2bed < LTR.gff3 > LTR.bed
