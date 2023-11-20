@@ -20,16 +20,15 @@ Ultra-Large genomes often strain computational resources during alignment or ind
 3. [bedtools2](https://github.com/arq5x/bedtools2)
 
 ## 2. Workflow (begin with a fasta file)
-### 1. Obtaining repetitive regions from Red
-#### 1. Creating Directory to Store Output
+### 1. Creating Directory to Store Output
 ```
 mkdir -p OUTPUT
 ```
-#### 2. Predicting Repetitive Sequences from genome
+### 2. Predicting Repetitive Sequences from genome
 ```
 Red -gnm /path/to/genome/dir/ -msk ./OUTPUT -rpt ./OUTPUT
 ```
-#### 3. Converting Soft-Masked Genome to Hard-Masked Genome
+### 3. Converting Soft-Masked Genome to Hard-Masked Genome
 ```
 awk '!/>/ {gsub(/[atcg]/,"N")} 1' ./OUTPUT/genome.msk > ./OUTPUT/genome.hardmasked.fa
 ```
