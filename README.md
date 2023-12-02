@@ -40,5 +40,5 @@ gff2bed < LTR.gff3 > LTR.bed
 ```
 ### 2. Masked genome.fa
 ```
-bedtools maskfasta -fi genome.fa -bed mask.bed -fo genome.hardmasked.fasta
+bedtools maskfasta -fi genome.fa -bed LTR.bed -fo genome.hardmasked.fasta
 ```
