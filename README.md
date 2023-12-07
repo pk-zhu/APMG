@@ -6,7 +6,7 @@
 > 
 >  ***Email: pkzhu222@gmail.com***
 > 
->  ***Cite:*** Zhu, P., He, T., Zheng, Y., and Chen, L. (2023). The need for masked genomes in gymnosperms. Frontiers in Plant Science 14. doi: 10.3389/fpls.2023.1309744.
+>  ***Cite: Zhu, P., He, T., Zheng, Y., and Chen, L. (2023). The need for masked genomes in gymnosperms. Frontiers in Plant Science 14. doi: 10.3389/fpls.2023.1309744.***
 >  
 >
 
